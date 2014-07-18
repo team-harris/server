@@ -2,21 +2,14 @@
 
 /**
  * @ngdoc overview
- * @name saveTheTreesApp
- * @description
- * # saveTheTreesApp
+ * @name EcoCisco
+ * @description #
  *
  * Main module of the application.
  */
 angular
-  .module('saveTheTreesApp', [
-    'ngAnimate',
-    'ngCookies',
-    'ngResource',
-    'ngRoute',
-    'ngSanitize',
-    'ngTouch'
-  ])
+  .module('EcoCisco', [])
+
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
