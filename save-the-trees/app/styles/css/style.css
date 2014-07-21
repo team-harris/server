@@ -155,7 +155,7 @@ a:focus {
 #page-wrapper {
     padding: 0 15px;
     border: none;
-    background-color: #ecf0f1;
+    background-color: #2f2f2f;
 }
 
 @media(min-width:768px) {
@@ -563,7 +563,7 @@ a:focus {
     margin-bottom: 0;
     border-bottom: 1px solid #54677a;
     font-size: 13px;
-    background-color: #34495e;
+    background-color: #292929;
 }
 
 .navbar-side .navbar-nav>li>a,
@@ -573,13 +573,13 @@ a:focus {
     text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
     outline: none;
     color: #fff;
-    background-color: #34495e;
+    background-color: #292929;
 }
 
 .navbar-side .side-nav li,
 .navbar-side .side-nav li.panel {
-    border-top: 1px solid #54677a;
-    border-bottom: 1px solid #142638;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid black;
 }
 
 .navbar-side .side-nav li.panel ul li {

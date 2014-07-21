@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" ng-app="EcoCisco">
 <head>
 
     <meta charset="utf-8">
@@ -31,6 +30,9 @@
     <!-- THEME DEMO STYLES - Use these styles for reference if needed. Otherwise they can be deleted. -->
     <link href="styles/css/demo.css" rel="stylesheet">
 
+    <!-- ANGULAR JAVASCRIPT -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script type="text/javascript" src="scripts/app.js"></script>
     <!--[if lt IE 9]>
       <script src="js/html5shiv.js"></script>
       <script src="js/respond.min.js"></script>
@@ -38,9 +40,9 @@
 
 </head>
 
-<body ng-app="EcoCisco">
+<body>
 
-    <div id="wrapper">
+    <div id="wrapper" ng-controller="GlobalController">
 
         <div data-ng-include data-src="'views/top-nav.html'"></div>
 
@@ -55,12 +57,24 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="page-title">
-                            <div id="login-wrapper">
-                                <form class="form-signin">
+                            <h1>Dashboard
+                                <small>Content Overview</small>
+                            </h1>
+                            <ol class="breadcrumb">
+                                <li class="active"><i class="fa fa-dashboard"></i> Dashboard</li>
+                                <li class="pull-right">
+                                    <div id="reportrange" class="btn btn-green btn-square date-picker">
+                                        <i class="fa fa-calendar"></i>
+                                        <span class="date-range"></span> <i class="fa fa-caret-down"></i>
+                                    </div>
+                                </li>
+                            </ol>
+                            <div id="login-wrapper" ng-controller="LoginController" ng-hide="state.isLoggedIn">
+                                <form class="form-signin" ng-submit="login()">
                                     <h1 class="form-signin-heading text-muted">Sign In</h1>
                                     <input type="text" class="form-control" placeholder="User" required="" autofocus="">
                                      <input type="password" class="form-control" placeholder="Password" required="">
-                                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button>
+                                    <button class="btn btn-lg btn-primnary btn-block" type="submit">Sign In</button>
                                 </form>
                             </div>
                         </div>
@@ -86,12 +100,11 @@
     <script src="scripts/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
     <script src="scripts/js/plugins/popupoverlay/jquery.popupoverlay.js"></script>
     <script src="scripts/js/plugins/popupoverlay/defaults.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+ 
     
     <!-- Logout Notification Box -->
     <div id="logout">
         <div class="logout-message">
-            <img class="img-circle img-logout" src="img/profile-pic.jpg" alt="">
             <h3>
                 <i class="fa fa-sign-out text-green"></i> Ready to go?
             </h3>
@@ -116,10 +129,10 @@
     <script src="scripts/js/plugins/hisrc/hisrc.js"></script>
 
     <!-- PAGE LEVEL PLUGIN SCRIPTS -->
-    <script src="scripts/app.js"></script>
 
     <!-- THEME SCRIPTS -->
     <script src="scripts/js/flex.js"></script>
+
 
 </body>
 

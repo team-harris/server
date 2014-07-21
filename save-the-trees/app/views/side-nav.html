@@ -1,8 +1,8 @@
 <!-- begin SIDE NAVIGATION -->
-<nav class="navbar-side" role="navigation">
+<nav class="navbar-side" role="navigation" ng-controller="SideNavController">
     <div class="navbar-collapse sidebar-collapse collapse">
         <ul id="side" class="nav navbar-nav side-nav">
-            <!-- begin SIDE NAV USER PANEL -->
+            <!-- begin SIDE NAV USER PutANEL -->
             <li class="side-user hidden-xs">
                 <img id="side-nav-eco-cisco-logo" src="../images/eco-cisco-logo.png" alt="">
                 <p class="welcome">
@@ -25,27 +25,11 @@
                 </form>
             </li>
             <!-- end SIDE NAV SEARCH -->
-            <!-- begin My EcoCisco LINK -->
-            <li>
+            <li ng-repeat="button in buttons" ng-click="toggle($index)">
                 <a href="#">
-                    <i class="fa fa-dashboard"></i> My EcoCisco 
+                    <i class="{{button.class}}"></i> {{button.label}} 
                 </a>
             </li>
-            <!-- end My EcoCisco LINK -->
-            <!-- begin PLEDGES DROPDOWN -->
-            <li>
-                <a href="#">
-                    <i class="fa fa-edit"></i> Pledges 
-                </a>
-            </li>
-            <!-- end PLEDGES DROPDOWN -->
-            <!-- begin ENERGY USAGE-->
-            <li>
-                <a href="#">
-                    <i class="fa fa-bar-chart-o"></i> Energy Usage
-                </a>
-            </li>
-            <!-- end ENERGY USAGE DROPDOWN -->
         </ul>
         <!-- /.side-nav -->
     </div>
