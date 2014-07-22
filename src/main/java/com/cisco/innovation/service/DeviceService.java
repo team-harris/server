@@ -15,4 +15,6 @@ public interface DeviceService {
 	void update(Device device);
 
 	void delete(Device device);
+
+	boolean isUUIDValid(String uuid);
 }
