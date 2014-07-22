@@ -68,13 +68,16 @@ public class DeviceRegistration {
 	@RequestMapping(method = RequestMethod.POST, value = "/sendusage", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> getPowerData(
 			@RequestBody PowerDataWrapper powerData) {
-		if (validateAPIKey(powerData.getUUID())) {
-			// TODO
+		if (validateDeviceUUid(powerData.getUUID())) {
+			logger.info("Device validation successful");
+		}
+		else {
+			logger.error("Device UUID not valid!!");
 		}
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
-	private boolean validateAPIKey(String apiKey) {
-		return false;
+	private boolean validateDeviceUUid(String uuid) {
+		return deviceService.isUUIDValid(uuid);
 	}
 }

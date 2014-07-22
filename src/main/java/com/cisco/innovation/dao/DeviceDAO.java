@@ -10,9 +10,11 @@ import com.cisco.innovation.model.Device;
  *
  */
 public interface DeviceDAO {
-	void save(Device device);
+	public void save(Device device);
 
-	void update(Device device);
+	public void update(Device device);
 
-	void delete(Device device);
+	public void delete(Device device);
+	
+	public boolean isUUIDValid(String uuid);
 }

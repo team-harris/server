@@ -3,6 +3,8 @@
  */
 package com.cisco.innovation.dao;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -32,6 +34,13 @@ public class DeviceDAOImpl implements DeviceDAO {
 	@Override
 	public void delete(Device device) {
 		sessionFactory.getCurrentSession().delete(device);
+	}
+
+	@Override
+	public boolean isUUIDValid(String uuid) {
+		@SuppressWarnings("rawtypes")
+		List list = sessionFactory.getCurrentSession().createQuery("from devices where uuid=" + uuid).list();
+		return !list.isEmpty();
 	}
 
 }
