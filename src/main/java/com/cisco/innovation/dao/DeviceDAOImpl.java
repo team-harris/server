@@ -39,8 +39,8 @@ public class DeviceDAOImpl implements DeviceDAO {
 	@Override
 	public boolean isUUIDValid(String uuid) {
 		@SuppressWarnings("rawtypes")
-		List list = sessionFactory.getCurrentSession().createQuery("from devices where uuid=" + uuid).list();
+		List list = sessionFactory.getCurrentSession().createQuery("from Device where UUID = :uuid").setParameter("uuid", uuid).list();
 		return !list.isEmpty();
 	}
-
+	
 }

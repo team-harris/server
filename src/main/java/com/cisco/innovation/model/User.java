@@ -4,6 +4,8 @@
 package com.cisco.innovation.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -33,7 +35,7 @@ public class User implements Serializable {
 	private String name;
 
 	private String businessGroup;
-
+	
 	@ManyToOne
 	private Device device;
 

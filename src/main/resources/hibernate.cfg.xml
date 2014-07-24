@@ -7,6 +7,8 @@
     <session-factory>
         <mapping class="com.cisco.innovation.model.Device" />
         <mapping class="com.cisco.innovation.model.User" />
+        <mapping class="com.cisco.innovation.model.TimeSeriesPowerData" />
+        <mapping class="com.cisco.innovation.model.TimeSeriesPowerPK" />
     </session-factory>
          
 </hibernate-configuration>

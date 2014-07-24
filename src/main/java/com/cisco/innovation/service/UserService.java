@@ -3,6 +3,8 @@
  */
 package com.cisco.innovation.service;
 
+import java.util.List;
+
 import com.cisco.innovation.model.User;
 
 /**
@@ -17,4 +19,6 @@ public interface UserService {
 	void delete(User user);
 
 	User findUserByUsername(String username);
+	
+	List<User> findUsersByDeviceUUID(String uuid);
 }
