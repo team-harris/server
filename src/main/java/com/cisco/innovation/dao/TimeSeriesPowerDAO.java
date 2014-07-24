@@ -4,7 +4,6 @@
 package com.cisco.innovation.dao;
 
 import java.util.List;
-
 import com.cisco.innovation.model.TimeSeriesPowerData;
 
 /**

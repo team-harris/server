@@ -1,7 +1,5 @@
 package com.cisco.innovation.utils;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class Utils {
@@ -27,7 +25,7 @@ public class Utils {
 		String currentTime = sdf.format(date);
 		return currentTime;
 	}
-	
+
 	public static String convertMinToDateString(Integer minutes) {
 		Date date = new Date();
 		Date dateBefore = new Date(date.getTime() - (minutes * 60000));

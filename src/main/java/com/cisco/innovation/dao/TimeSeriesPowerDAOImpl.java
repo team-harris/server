@@ -46,5 +46,4 @@ public class TimeSeriesPowerDAOImpl implements TimeSeriesPowerDAO{
 		List powerUsedList=query.list();
 		return powerUsedList;
 	}
-
 }

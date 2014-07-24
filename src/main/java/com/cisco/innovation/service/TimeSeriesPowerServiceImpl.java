@@ -17,11 +17,11 @@ import com.cisco.innovation.model.TimeSeriesPowerData;
  *
  */
 @Service("timeSeriesPowerService")
-public class TimeSeriesPowerServiceImpl implements TimeSeriesPowerService{
+public class TimeSeriesPowerServiceImpl implements TimeSeriesPowerService {
 
 	@Autowired
 	private TimeSeriesPowerDAO timeSeriesPowerDAO;
-	
+
 	@Override
 	@Transactional
 	public void save(TimeSeriesPowerData data) {
@@ -42,9 +42,7 @@ public class TimeSeriesPowerServiceImpl implements TimeSeriesPowerService{
 
 	@Override
 	@Transactional
-	public List getPowerUsageForUser(String username, String current,
-			String end) {
+	public List getPowerUsageForUser(String username, String current, String end) {
 		return timeSeriesPowerDAO.getPowerUsageForUser(username, current, end);
 	}
-	
 }

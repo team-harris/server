@@ -17,6 +17,6 @@ public interface TimeSeriesPowerService {
 	public void update(TimeSeriesPowerData data);
 
 	public void delete(TimeSeriesPowerData data);
-	
+
 	public List getPowerUsageForUser(String username, String current, String end);
 }

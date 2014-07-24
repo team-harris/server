@@ -27,18 +27,21 @@ import com.cisco.innovation.utils.Utils;
 @RequestMapping("/powermonitor")
 public class PowerUsage {
 	private static Logger logger = LoggerFactory.getLogger(PowerUsage.class);
-	
+
 	@Autowired
 	private TimeSeriesPowerService timeSeriesPowerService;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/getdata", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> getPowerData(
 			@RequestBody UserDataRequest request) {
-		logger.debug("Request obtained for user" + request.getUsername() + " for " + request.getMinutes() + " minutes");
-		
-		System.out.println(timeSeriesPowerService.getPowerUsageForUser(request.getUsername(), Utils.getCurrentDateTime(), Utils.convertMinToDateString(request.getMinutes())));;
-		
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
+		logger.debug("Request obtained for user" + request.getUsername()
+				+ " for " + request.getMinutes() + " minutes");
 
+		System.out.println(timeSeriesPowerService.getPowerUsageForUser(
+				request.getUsername(), Utils.getCurrentDateTime(),
+				Utils.convertMinToDateString(request.getMinutes())));
+		;
+		return new ResponseEntity<Void>(HttpStatus.OK);
+
+	}
 }
