@@ -39,7 +39,7 @@ public class TimeSeriesPowerDAOImpl implements TimeSeriesPowerDAO{
 
 	@Override
 	public List getPowerUsageForUser(String username, String current, String end) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from TimeSeriesPowerData where timeSeriesPowerPK.dateTime <=:param1 AND timeSeriesPowerPK.dateTime >= :param2 AND username= :username");
+		Query query = sessionFactory.getCurrentSession().createQuery("select timeSeriesPowerPK.watts from TimeSeriesPowerData where timeSeriesPowerPK.dateTime <=:param1 AND timeSeriesPowerPK.dateTime >= :param2 AND username= :username");
 		query.setParameter("param1",current);
 		query.setParameter("param2",end);
 		query.setParameter("username", username);
