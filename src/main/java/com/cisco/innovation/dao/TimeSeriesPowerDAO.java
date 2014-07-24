@@ -3,6 +3,8 @@
  */
 package com.cisco.innovation.dao;
 
+import java.util.List;
+
 import com.cisco.innovation.model.TimeSeriesPowerData;
 
 /**
@@ -15,4 +17,6 @@ public interface TimeSeriesPowerDAO {
 	public void update(TimeSeriesPowerData data);
 	
 	public void delete(TimeSeriesPowerData data);
+	
+	public List getPowerUsageForUser(String username, String current, String end);
 }

@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.cisco.innovation.data.PowerDataWrapper;
 import com.cisco.innovation.model.Device;
 import com.cisco.innovation.model.TimeSeriesPowerData;
 import com.cisco.innovation.model.TimeSeriesPowerPK;
 import com.cisco.innovation.model.User;
+import com.cisco.innovation.request.PowerDataWrapper;
 import com.cisco.innovation.service.DeviceService;
 import com.cisco.innovation.service.TimeSeriesPowerService;
 import com.cisco.innovation.service.UserService;

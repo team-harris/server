@@ -3,6 +3,8 @@
  */
 package com.cisco.innovation.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,4 +40,11 @@ public class TimeSeriesPowerServiceImpl implements TimeSeriesPowerService{
 		timeSeriesPowerDAO.delete(data);
 	}
 
+	@Override
+	@Transactional
+	public List getPowerUsageForUser(String username, String current,
+			String end) {
+		return timeSeriesPowerDAO.getPowerUsageForUser(username, current, end);
+	}
+	
 }

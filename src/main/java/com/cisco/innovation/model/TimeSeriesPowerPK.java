@@ -23,6 +23,10 @@ public class TimeSeriesPowerPK implements Serializable {
 	private String username;
 	private Integer watts;
 	private String dateTime;
+	
+	public TimeSeriesPowerPK() {
+		
+	}
 
 	public TimeSeriesPowerPK(String username, Integer watts, String dateTime) {
 		this.username = username;
