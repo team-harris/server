@@ -36,7 +36,7 @@ public class PowerUsage {
 			@RequestBody UserDataRequest request) {
 		logger.debug("Request obtained for user" + request.getUsername() + " for " + request.getMinutes() + " minutes");
 		
-		System.out.println(timeSeriesPowerService.getPowerUsageForUser(request.getUsername(), Utils.getCurrentDateTime(), Utils.convertMinToDateString(60)));;
+		System.out.println(timeSeriesPowerService.getPowerUsageForUser(request.getUsername(), Utils.getCurrentDateTime(), Utils.convertMinToDateString(request.getMinutes())));;
 		
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
