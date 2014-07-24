@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.cisco.innovation.model.User;
 
+@Repository("userDAO")
 public class UserDAOImpl implements UserDAO {
 
 	@Autowired
@@ -37,7 +39,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public List<User> findUsersByDeviceUUID(String uuid) {
 			@SuppressWarnings("unchecked")
-			List<User> list = (List<User>) sessionFactory.getCurrentSession().createQuery("from users where uuid=" + uuid).list();
+			List<User> list = (List<User>)sessionFactory.getCurrentSession().createQuery("from User where device_uuid = :uuid").setParameter("uuid", uuid).list();
 			return list;
 	}
 
