@@ -77,7 +77,7 @@ public class DeviceRegistration {
 			for (User user : users) {
 				// Calculate running average
 				// Persist again
-				TimeSeriesPowerPK timeSeriesPowerPK = new TimeSeriesPowerPK(user.getUsername(), Integer.valueOf(powerData.getReading1()), Utils.getCurrentDateTime());
+				TimeSeriesPowerPK timeSeriesPowerPK = new TimeSeriesPowerPK(user.getUsername(), powerData.getReading1(), Utils.getCurrentDateTime());
 				TimeSeriesPowerData data = new TimeSeriesPowerData();
 				data.setTimeSeriesPowerPK(timeSeriesPowerPK);
 				timeSeriesPowerService.save(data);

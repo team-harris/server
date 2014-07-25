@@ -20,8 +20,8 @@ public class UserDataRequest implements Serializable{
 	@JsonProperty("username")
 	private String username;
 	
-	@JsonProperty("minutes")
-	private Integer minutes;
+	@JsonProperty("hours")
+	private Integer hours;
 
 	public String getUsername() {
 		return username;
@@ -31,12 +31,12 @@ public class UserDataRequest implements Serializable{
 		this.username = username;
 	}
 
-	public Integer getMinutes() {
-		return minutes;
+	public Integer getHours() {
+		return hours;
 	}
 
-	public void setMinutes(Integer minutes) {
-		this.minutes = minutes;
+	public void setHours(Integer hours) {
+		this.hours = hours;
 	}
 
 }

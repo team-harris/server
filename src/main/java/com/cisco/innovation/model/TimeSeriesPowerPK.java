@@ -20,14 +20,14 @@ public class TimeSeriesPowerPK implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String username;
-	private Integer watts;
+	private Double watts;
 	private String dateTime;
 
 	public TimeSeriesPowerPK() {
 
 	}
 
-	public TimeSeriesPowerPK(String username, Integer watts, String dateTime) {
+	public TimeSeriesPowerPK(String username, Double watts, String dateTime) {
 		this.username = username;
 		this.watts = watts;
 		this.dateTime = dateTime;
@@ -41,20 +41,20 @@ public class TimeSeriesPowerPK implements Serializable {
 		this.username = username;
 	}
 
-	public Integer getWatts() {
-		return watts;
-	}
-
-	public void setWatts(Integer watts) {
-		this.watts = watts;
-	}
-
 	public String getDateTime() {
 		return dateTime;
 	}
 
 	public void setDateTime(String dateTime) {
 		this.dateTime = dateTime;
+	}
+
+	public Double getWatts() {
+		return watts;
+	}
+
+	public void setWatts(Double watts) {
+		this.watts = watts;
 	}
 
 }
