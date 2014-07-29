@@ -52,4 +52,10 @@ public class UserServiceImpl implements UserService {
 		return userDAO.findUsersByDeviceUUID(uuid);
 	}
 
+	@Override
+	@Transactional
+	public List<User> findUsersByGroup(String group) {
+		return userDAO.findUsersByGroup(group);
+	}
+
 }

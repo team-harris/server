@@ -21,4 +21,6 @@ public interface UserDAO {
 	User findUserByUsername(String username);
 
 	List<User> findUsersByDeviceUUID(String uuid);
+	
+	List<User> findUsersByGroup(String group);
 }

@@ -20,6 +20,9 @@ public class UserDataRequest implements Serializable{
 	@JsonProperty("username")
 	private String username;
 	
+	@JsonProperty("group")
+	private String group;
+	
 	@JsonProperty("hours")
 	private Integer hours;
 	
@@ -59,6 +62,14 @@ public class UserDataRequest implements Serializable{
 
 	public void setMonths(Integer months) {
 		this.months = months;
+	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
 	}
 
 }

@@ -38,9 +38,16 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public List<User> findUsersByDeviceUUID(String uuid) {
-			@SuppressWarnings("unchecked")
-			List<User> list = (List<User>)sessionFactory.getCurrentSession().createQuery("from User where device_uuid = :uuid").setParameter("uuid", uuid).list();
-			return list;
+		@SuppressWarnings("unchecked")
+		List<User> users = (List<User>)sessionFactory.getCurrentSession().createQuery("from User where device_uuid = :uuid").setParameter("uuid", uuid).list();
+		return users;
+	}
+
+	@Override
+	public List<User> findUsersByGroup(String group) {
+		@SuppressWarnings("unchecked")
+		List<User> users = (List<User>) sessionFactory.getCurrentSession().createQuery("from User where group = :group").setParameter("group", group).list();
+		return users;
 	}
 
 }

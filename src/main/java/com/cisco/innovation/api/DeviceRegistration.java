@@ -71,7 +71,6 @@ public class DeviceRegistration {
 	@RequestMapping(method = RequestMethod.POST, value = "/sendusage", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> getPowerData(
 			@RequestBody PowerDataWrapper powerData) {
-		
 		if (validateDeviceUUid(powerData.getUUID())) {
 			List<User> users = userService.findUsersByDeviceUUID(powerData.getUUID());
 			for (User user : users) {
