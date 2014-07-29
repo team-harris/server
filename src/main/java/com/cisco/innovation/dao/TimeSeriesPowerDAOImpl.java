@@ -46,4 +46,13 @@ public class TimeSeriesPowerDAOImpl implements TimeSeriesPowerDAO{
 		List powerUsedList=query.list();
 		return powerUsedList;
 	}
+
+	@Override
+	public List getLivePowerForUser(String username) {
+		Query query = sessionFactory.getCurrentSession().createQuery("select timeSeriesPowerPK from TimeSeriesPowerData where username =:username ORDER BY timeSeriesPowerPK.dateTime desc");
+		query.setParameter("username", username);
+		query.setMaxResults(1);
+		List liveData = query.list();
+		return liveData;
+	}
 }

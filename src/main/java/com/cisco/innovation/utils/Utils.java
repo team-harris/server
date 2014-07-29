@@ -2,6 +2,7 @@ package com.cisco.innovation.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class Utils {
 	private static Logger logger = LoggerFactory.getLogger(Utils.class);
+	
 	public static double exponentialMovingAvg(Double oldValue, double value,
 			double alpha) {
 		if (oldValue == null) {
@@ -37,6 +39,20 @@ public class Utils {
 		Date date = new Date();
 		Date dateBefore = new Date(date.getTime() - (hours * 3600 * 1000));
 		return formatDate(dateBefore);
+	}
+	
+	public static String subtractDaysFromCurrentDate(Integer days) {
+		Date date = new Date();
+		Date dateBefore = new Date(date.getTime() - (days * 24 * 3600 * 1000));
+		return formatDate(dateBefore);
+	}
+	
+	public static String subtractMonthsFromCurrentDate(Integer months) {
+		Date date = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MONTH, -months);
+		return formatDate(cal.getTime());
 	}
 	
 	public static Date getDateFromString(String dateString) {

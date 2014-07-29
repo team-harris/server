@@ -45,4 +45,10 @@ public class TimeSeriesPowerServiceImpl implements TimeSeriesPowerService {
 	public List getPowerUsageForUser(String username, String current, String end) {
 		return timeSeriesPowerDAO.getPowerUsageForUser(username, current, end);
 	}
+
+	@Override
+	@Transactional
+	public List getLivePowerForUser(String username) {
+		return timeSeriesPowerDAO.getLivePowerForUser(username);
+	}
 }

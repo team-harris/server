@@ -18,4 +18,6 @@ public interface TimeSeriesPowerDAO {
 	public void delete(TimeSeriesPowerData data);
 	
 	public List getPowerUsageForUser(String username, String current, String end);
+	
+	public List getLivePowerForUser(String username);
 }

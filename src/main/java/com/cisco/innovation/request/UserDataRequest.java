@@ -22,7 +22,13 @@ public class UserDataRequest implements Serializable{
 	
 	@JsonProperty("hours")
 	private Integer hours;
-
+	
+	@JsonProperty("days")
+	private Integer days;
+	
+	@JsonProperty("months")
+	private Integer months;
+	
 	public String getUsername() {
 		return username;
 	}
@@ -37,6 +43,22 @@ public class UserDataRequest implements Serializable{
 
 	public void setHours(Integer hours) {
 		this.hours = hours;
+	}
+
+	public Integer getDays() {
+		return days;
+	}
+
+	public void setDays(Integer days) {
+		this.days = days;
+	}
+
+	public Integer getMonths() {
+		return months;
+	}
+
+	public void setMonths(Integer months) {
+		this.months = months;
 	}
 
 }

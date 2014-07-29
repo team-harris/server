@@ -19,6 +19,7 @@ public class PowerDataResponse implements Serializable{
 	private Integer responseCode;
 	private Map<Integer, Double> hoursMap;
 	private Map<Integer, Double> daysMap;
+	private Map<Integer, Double> monthsMap;
 
 	public Map<Integer, Double> getHoursMap() {
 		return hoursMap;
@@ -42,6 +43,14 @@ public class PowerDataResponse implements Serializable{
 
 	public void setResponseCode(Integer responseCode) {
 		this.responseCode = responseCode;
+	}
+
+	public Map<Integer, Double> getMonthsMap() {
+		return monthsMap;
+	}
+
+	public void setMonthsMap(Map<Integer, Double> monthsMap) {
+		this.monthsMap = monthsMap;
 	}
 
 }
