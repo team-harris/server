@@ -64,4 +64,11 @@ public class Utils {
 		}
 		return null;
 	}
+
+	public static int getMonthsDifference(Date date1,
+			Date date2) {
+		int m1 = date1.getYear() * 12 + date1.getMonth();
+	    int m2 = date2.getYear() * 12 + date2.getMonth();
+	    return m2 - m1 + 1;
+	}
 }

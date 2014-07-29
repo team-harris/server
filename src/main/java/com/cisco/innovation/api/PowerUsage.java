@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,31 +163,32 @@ public class PowerUsage {
 				logger.debug("Power at " + dateFromString + " considered for average");
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(dateFromString);
-				int hour = cal.get(Calendar.HOUR_OF_DAY);
-				int date = cal.get(Calendar.DAY_OF_MONTH);
-				int month = cal.get(Calendar.MONTH);
+				int hours = (int) ((Utils.getDateFromString(currentDateTime).getTime() - dateFromString.getTime()) / (1000 * 3600));
+				int days = (int) ((Utils.getDateFromString(currentDateTime).getTime() - dateFromString.getTime()) / (1000 * 3600 * 24));
+				int months = Utils.getMonthsDifference(Utils.getDateFromString(currentDateTime), dateFromString);
 				int year = cal.get(Calendar.YEAR);
-				// Check for 0
+				
+				// TODO: Year
 				if (request.getHours() > 0 && request.getDays() == 0 && request.getMonths() == 0) {
-					if (hourAvgMap.containsKey(hour)) {
-						hourAvgMap.put(hour, Utils.exponentialMovingAvg(hourAvgMap.get(hour),
+					if (hourAvgMap.containsKey(hours)) {
+						hourAvgMap.put(hours, Utils.exponentialMovingAvg(hourAvgMap.get(hours),
 										powerData.getWatts(), 0.5));
 					} else {
-						hourAvgMap.put(hour, powerData.getWatts());
+						hourAvgMap.put(hours, powerData.getWatts());
 					}
 				} else if (request.getDays() > 0 && request.getHours() == 0 && request.getMonths() == 0) {
-					if (daysAvgMap.containsKey(date)) {
-						daysAvgMap.put(date, Utils.exponentialMovingAvg(daysAvgMap.get(date),
+					if (daysAvgMap.containsKey(days)) {
+						daysAvgMap.put(days, Utils.exponentialMovingAvg(daysAvgMap.get(days),
 										powerData.getWatts(), 0.5));
 					} else {
-						daysAvgMap.put(date, powerData.getWatts());
+						daysAvgMap.put(days, powerData.getWatts());
 					}
 				} else if (request.getMonths() > 0 && request.getHours() == 0 && request.getDays() == 0) {
-					if (monthsAvgMap.containsKey(month)) {
-						monthsAvgMap.put(month, Utils.exponentialMovingAvg(monthsAvgMap.get(month),
+					if (monthsAvgMap.containsKey(months)) {
+						monthsAvgMap.put(months, Utils.exponentialMovingAvg(monthsAvgMap.get(months),
 										powerData.getWatts(), 0.5));
 					} else {
-						monthsAvgMap.put(month, powerData.getWatts());
+						monthsAvgMap.put(months, powerData.getWatts());
 					}
 				}
 			}
