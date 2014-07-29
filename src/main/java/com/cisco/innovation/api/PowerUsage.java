@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cisco.innovation.model.TimeSeriesPowerPK;
 import com.cisco.innovation.request.UserDataRequest;
+import com.cisco.innovation.response.LivePowerDataResponse;
 import com.cisco.innovation.response.PowerDataResponse;
 import com.cisco.innovation.service.TimeSeriesPowerService;
 import com.cisco.innovation.utils.Utils;
@@ -45,13 +47,12 @@ public class PowerUsage {
 				+ " for " + request.getHours() + " hours");
 
 		String currentDateTime = Utils.getCurrentDateTime();
-		String previousDateTime = Utils.subtractHoursFromCurrentDate(request
-				.getHours());
+		String previousDateTime = subtractAndGetPreviousDate(request);
 		@SuppressWarnings("unchecked")
 		List<TimeSeriesPowerPK> powerDataList = timeSeriesPowerService
 				.getPowerUsageForUser(username, currentDateTime,
 						previousDateTime);
-		if (!powerDataList.isEmpty()) {
+		if (!powerDataList.isEmpty() && previousDateTime == null) {
 			logger.debug(powerDataList.size() + " values obtained for user " + username);
 			response = computeAverages(powerDataList, currentDateTime, previousDateTime);
 			response.setResponseCode(HttpStatus.OK.value());
@@ -64,20 +65,52 @@ public class PowerUsage {
 		}
 
 	}
+
+	public String subtractAndGetPreviousDate(UserDataRequest request) {
+		double hours = request.getHours();
+		double days = request.getDays();
+		double months = request.getMonths();
+		if (hours > 0 && days == 0 && months == 0) {
+			return Utils.subtractHoursFromCurrentDate(request
+					.getHours());
+		} else if (days > 0 && hours == 0 && months == 0) {
+			return Utils.subtractDaysFromCurrentDate(request
+					.getHours());
+		} else if (months > 0 && hours == 0 && days == 0) {
+			return Utils.subtractMonthsFromCurrentDate(request
+				.getHours());
+		} else {
+			logger.error("Invalid request");
+			return null;
+		}
+	}
 	
 	// Consider GET
-	@RequestMapping(method = RequestMethod.POST, value = "/getlivedata", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody Double getLivePowerData() {
+	@RequestMapping(method = RequestMethod.GET, value = "/getlivedata/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody LivePowerDataResponse getLivePowerData(@PathVariable String username) {
 		// Code for producing live data for a user goes here
 		// Get latest record from DB for a user
 		// Construct response object and send response code
-		return null;
+		@SuppressWarnings("unchecked")
+		List<TimeSeriesPowerPK> list = (List<TimeSeriesPowerPK>) timeSeriesPowerService.getLivePowerForUser(username);
+		LivePowerDataResponse response = new LivePowerDataResponse();
+		if (list == null || list.size() != 1) {
+			logger.error("No live data!");
+			response.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return response;
+		}
+		response.setResponseCode(HttpStatus.OK.value());
+		Double watts = list.get(0).getWatts();
+		response.setWatts(watts);
+		logger.info("Live data for user " + username + " is" + watts + " watts obtained at: " + list.get(0).getDateTime());
+		return response;
 	}
 
 	private PowerDataResponse computeAverages(List<TimeSeriesPowerPK> powerDataList,
 			String currentDateTime, String previousDateTime) {
 		HashMap<Integer, Double> hourAvgMap = new HashMap<Integer, Double>();
 		HashMap<Integer, Double> daysAvgMap = new HashMap<Integer, Double>();
+		HashMap<Integer, Double> monthsAvgMap = new HashMap<Integer, Double>();
 		
 		/*DescriptiveStatistics statsHours = new DescriptiveStatistics();
 		statsHours.setWindowSize(powerDataList.size());
@@ -93,7 +126,9 @@ public class PowerUsage {
 							.getDateFromString(currentDateTime))) {
 				logger.debug("Power at " + dateFromString + " considered for average");
 				int hour = dateFromString.getHours();
-				int day = dateFromString.getDay();
+				int date = dateFromString.getDate();
+				int month = dateFromString.getMonth();
+				int year = dateFromString.getYear();
 				if (hourAvgMap.containsKey(hour)) {
 					hourAvgMap.put(hour, Utils.exponentialMovingAvg(hourAvgMap.get(hour),
 									powerData.getWatts(), 0.5));
@@ -101,11 +136,18 @@ public class PowerUsage {
 					hourAvgMap.put(hour, powerData.getWatts());
 				}
 				
-				if (daysAvgMap.containsKey(day)) {
-					daysAvgMap.put(day, Utils.exponentialMovingAvg(daysAvgMap.get(day),
+				if (daysAvgMap.containsKey(date)) {
+					daysAvgMap.put(date, Utils.exponentialMovingAvg(daysAvgMap.get(date),
 									powerData.getWatts(), 0.5));
 				} else {
-					daysAvgMap.put(day, powerData.getWatts());
+					daysAvgMap.put(date, powerData.getWatts());
+				}
+				
+				if (monthsAvgMap.containsKey(month)) {
+					monthsAvgMap.put(month, Utils.exponentialMovingAvg(monthsAvgMap.get(month),
+									powerData.getWatts(), 0.5));
+				} else {
+					monthsAvgMap.put(month, powerData.getWatts());
 				}
 
 			}
