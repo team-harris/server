@@ -7,8 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cisco.innovation.model.TimeSeriesPowerPK;
 import com.cisco.innovation.model.User;
 import com.cisco.innovation.request.UserDataRequest;
+import com.cisco.innovation.response.GroupPowerDataResponse;
 import com.cisco.innovation.response.LivePowerDataResponse;
 import com.cisco.innovation.response.PowerDataResponse;
 import com.cisco.innovation.service.TimeSeriesPowerService;
@@ -64,22 +65,57 @@ public class PowerUsage {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/getgroupdata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody PowerDataResponse getPowerDataForGroup(@RequestBody UserDataRequest request) {
-		PowerDataResponse response;
+	public @ResponseBody GroupPowerDataResponse getPowerDataForGroup(@RequestBody UserDataRequest request) {
+		Map<Integer, Double> hoursMap = null;
+		Map<Integer, Double> daysMap = null;
+		Map<Integer, Double> monthsMap = null;
 		String group = request.getGroup();
+		Double groupTotal = 0.0;
 		logger.debug("Request obtained for group" + group	+ " for " + request.getHours() + " hours");
 		String currentDateTime = Utils.getCurrentDateTime();
 		String previousDateTime = subtractAndGetPreviousDate(request);
 		List<User> users = userService.findUsersByGroup(group);
 		if (users.isEmpty()) {
-			return generateFailureResponse(group);
+			return generateGroupFailureResponse(group);
 		} else {
 			for (User user : users) {
-				
+				Double userTotal = 0.0;
+				@SuppressWarnings("unchecked")
+				List<TimeSeriesPowerPK> powerDataList = timeSeriesPowerService.getPowerUsageForUser(user.getUsername(), currentDateTime,
+								previousDateTime);
+				PowerDataResponse res = queryUsageAndGenerateResponse(user.getUsername(), currentDateTime, previousDateTime, powerDataList, request);
+				if (res.getResponseCode() != 400) {
+					if (res.getHoursMap().size() > 0) {
+						hoursMap = res.getHoursMap();
+						userTotal = sumMapValues(hoursMap);
+					}
+					if (res.getDaysMap().size() > 0) {
+						daysMap = res.getDaysMap();
+						userTotal = sumMapValues(daysMap);
+					}
+					if (res.getMonthsMap().size() > 0) {
+						monthsMap = res.getMonthsMap();
+						userTotal = sumMapValues(monthsMap);
+					}
+					groupTotal += userTotal;
+				}
 			}
 		}
-		
-		return null;
+		GroupPowerDataResponse response = new GroupPowerDataResponse();
+		response.setResponseCode(HttpStatus.OK.value());
+		response.setDaysMap(daysMap);
+		response.setHoursMap(hoursMap);
+		response.setMonthsMap(monthsMap);
+		response.setGroupWatts(groupTotal);
+		return response;
+	}
+
+	private Double sumMapValues(Map<Integer, Double> map) {
+		Double sum = 0.0;
+		for (Double value : map.values()) {
+			sum += value;
+		}
+		return sum;
 	}
 
 	private PowerDataResponse queryUsageAndGenerateResponse(String username,
@@ -91,14 +127,22 @@ public class PowerUsage {
 			response.setResponseCode(HttpStatus.OK.value());
 			return response;
 		} else {
-			return generateFailureResponse(username);
+			return generateUserFailureResponse(username);
 		}
 	}
 
-	private PowerDataResponse generateFailureResponse(String value) {
+	private PowerDataResponse generateUserFailureResponse(String value) {
 		PowerDataResponse response;
 		logger.debug("ZERO values obtained for user/group " + value);
 		response = new PowerDataResponse();
+		response.setResponseCode(HttpStatus.BAD_REQUEST.value());
+		return response;
+	}
+	
+	private GroupPowerDataResponse generateGroupFailureResponse(String value) {
+		GroupPowerDataResponse response;
+		logger.debug("ZERO values obtained for user/group " + value);
+		response = new GroupPowerDataResponse();
 		response.setResponseCode(HttpStatus.BAD_REQUEST.value());
 		return response;
 	}
@@ -166,7 +210,6 @@ public class PowerUsage {
 				int hours = (int) ((Utils.getDateFromString(currentDateTime).getTime() - dateFromString.getTime()) / (1000 * 3600));
 				int days = (int) ((Utils.getDateFromString(currentDateTime).getTime() - dateFromString.getTime()) / (1000 * 3600 * 24));
 				int months = Utils.getMonthsDifference(Utils.getDateFromString(currentDateTime), dateFromString);
-				int year = cal.get(Calendar.YEAR);
 				
 				// TODO: Year
 				if (request.getHours() > 0 && request.getDays() == 0 && request.getMonths() == 0) {
