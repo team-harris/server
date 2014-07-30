@@ -58,4 +58,10 @@ public class UserServiceImpl implements UserService {
 		return userDAO.findUsersByGroup(group);
 	}
 
+	@Override
+	@Transactional
+	public List<String> getAllGroups() {
+		return userDAO.getAllGroups();
+	}
+
 }

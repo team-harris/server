@@ -9,7 +9,8 @@ import java.io.Serializable;
  * @author rajagast
  *
  */
-public class GroupPowerDataResponse extends PowerDataResponse implements Serializable {
+public class GroupPowerDataResponse extends PowerDataResponse implements
+		Serializable, Comparable<GroupPowerDataResponse> {
 
 	/**
 	 * 
@@ -19,9 +20,9 @@ public class GroupPowerDataResponse extends PowerDataResponse implements Seriali
 	public GroupPowerDataResponse() {
 		super();
 	}
-	
+
 	private String group;
-	
+
 	private double groupWatts;
 
 	public String getGroup() {
@@ -38,6 +39,15 @@ public class GroupPowerDataResponse extends PowerDataResponse implements Seriali
 
 	public void setGroupWatts(double groupWatts) {
 		this.groupWatts = groupWatts;
+	}
+
+	@Override
+	public int compareTo(GroupPowerDataResponse that) {
+		if (this.groupWatts < that.groupWatts)
+			return -1;
+		if (this.groupWatts > that.groupWatts)
+			return +1;
+		return 0;
 	}
 
 }

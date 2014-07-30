@@ -23,4 +23,6 @@ public interface UserService {
 	List<User> findUsersByDeviceUUID(String uuid);
 	
 	List<User> findUsersByGroup(String group);
+	
+	List<String> getAllGroups();
 }

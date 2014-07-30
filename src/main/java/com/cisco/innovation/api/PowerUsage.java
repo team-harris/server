@@ -4,6 +4,7 @@
 package com.cisco.innovation.api;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cisco.innovation.model.TimeSeriesPowerPK;
 import com.cisco.innovation.model.User;
 import com.cisco.innovation.request.UserDataRequest;
+import com.cisco.innovation.response.AllGroupsDataResponse;
 import com.cisco.innovation.response.GroupPowerDataResponse;
 import com.cisco.innovation.response.LivePowerDataResponse;
 import com.cisco.innovation.response.PowerDataResponse;
@@ -32,7 +34,8 @@ import com.cisco.innovation.service.UserService;
 import com.cisco.innovation.utils.Utils;
 
 /**
- * @author rajagast Class whose methods are exposed to the device
+ * @author rajagast 
+ * Class whose methods are exposed to the device
  *
  */
 
@@ -66,10 +69,19 @@ public class PowerUsage {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/getgroupdata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody GroupPowerDataResponse getPowerDataForGroup(@RequestBody UserDataRequest request) {
+		GroupPowerDataResponse response;
 		Map<Integer, Double> hoursMap = null;
 		Map<Integer, Double> daysMap = null;
 		Map<Integer, Double> monthsMap = null;
 		String group = request.getGroup();
+		response = calculateForGroup(group, hoursMap, daysMap, monthsMap, request);
+		return response;
+		
+	}
+	
+	private GroupPowerDataResponse calculateForGroup(String group,
+			Map<Integer, Double> hoursMap, Map<Integer, Double> daysMap,
+			Map<Integer, Double> monthsMap, UserDataRequest request) {
 		Double groupTotal = 0.0;
 		logger.debug("Request obtained for group" + group	+ " for " + request.getHours() + " hours");
 		String currentDateTime = Utils.getCurrentDateTime();
@@ -100,14 +112,40 @@ public class PowerUsage {
 					groupTotal += userTotal;
 				}
 			}
+			GroupPowerDataResponse response = new GroupPowerDataResponse();
+			response.setResponseCode(HttpStatus.OK.value());
+			response.setDaysMap(daysMap);
+			response.setHoursMap(hoursMap);
+			response.setMonthsMap(monthsMap);
+			response.setGroupWatts(groupTotal);
+			response.setGroup(group);
+			return response;
 		}
-		GroupPowerDataResponse response = new GroupPowerDataResponse();
-		response.setResponseCode(HttpStatus.OK.value());
-		response.setDaysMap(daysMap);
-		response.setHoursMap(hoursMap);
-		response.setMonthsMap(monthsMap);
-		response.setGroupWatts(groupTotal);
-		return response;
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/getallgroups", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AllGroupsDataResponse getAllGroupsData(@RequestBody UserDataRequest request) {
+		AllGroupsDataResponse response;
+		GroupPowerDataResponse groupResponse;
+		Map<Integer, Double> hoursMap = null;
+		Map<Integer, Double> daysMap = null;
+		Map<Integer, Double> monthsMap = null;
+		List<String> groups = userService.getAllGroups();
+		if (!groups.isEmpty()) {
+			response = new AllGroupsDataResponse();
+			for (String group : groups) {
+				groupResponse = calculateForGroup(group, hoursMap, daysMap, monthsMap, request);
+				response.getListOfGroups().add(groupResponse);
+			}
+			Collections.sort(response.getListOfGroups(), Collections.reverseOrder());
+			response.setResponseCode(HttpStatus.OK.value());
+			return response;
+		} else {
+			response = new AllGroupsDataResponse();
+			response.setResponseCode(HttpStatus.BAD_REQUEST.value());
+			return response;
+		}
 	}
 
 	private Double sumMapValues(Map<Integer, Double> map) {

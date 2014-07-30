@@ -50,4 +50,11 @@ public class UserDAOImpl implements UserDAO {
 		return users;
 	}
 
+	@Override
+	public List<String> getAllGroups() {
+		@SuppressWarnings("unchecked")
+		List<String> groupsList = (List<String>) sessionFactory.getCurrentSession().createQuery("select distinct u.group from User u").list();
+		return groupsList;
+	}
+
 }

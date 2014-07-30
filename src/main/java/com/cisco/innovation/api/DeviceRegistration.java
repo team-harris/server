@@ -3,8 +3,12 @@
  */
 package com.cisco.innovation.api;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cisco.innovation.model.Device;
 import com.cisco.innovation.model.TimeSeriesPowerData;
@@ -68,17 +73,19 @@ public class DeviceRegistration {
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/sendusage", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> getPowerData(@RequestBody PowerDataWrapper powerData) {
+	@RequestMapping(method = RequestMethod.GET, value = "/sendusage")
+	public ResponseEntity<Void> getPowerData(@RequestParam("data") String data) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		PowerDataWrapper powerData = objectMapper.readValue(data, PowerDataWrapper.class);
 		if (validateDeviceUUid(powerData.getUUID())) {
 			List<User> users = userService.findUsersByDeviceUUID(powerData.getUUID());
 			for (User user : users) {
 				// Calculate running average
 				// Persist again
 				TimeSeriesPowerPK timeSeriesPowerPK = new TimeSeriesPowerPK(user.getUsername(), powerData.getReading1(), Utils.getCurrentDateTime());
-				TimeSeriesPowerData data = new TimeSeriesPowerData();
-				data.setTimeSeriesPowerPK(timeSeriesPowerPK);
-				timeSeriesPowerService.save(data);
+				TimeSeriesPowerData timeSeriesData = new TimeSeriesPowerData();
+				timeSeriesData.setTimeSeriesPowerPK(timeSeriesPowerPK);
+				timeSeriesPowerService.save(timeSeriesData);
 			}
 			logger.info("Device validation successful");
 			return new ResponseEntity<Void>(HttpStatus.OK);
