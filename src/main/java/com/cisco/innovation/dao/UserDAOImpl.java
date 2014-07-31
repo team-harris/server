@@ -47,14 +47,14 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public List<User> findUsersByGroup(String group) {
 		@SuppressWarnings("unchecked")
-		List<User> users = (List<User>) sessionFactory.getCurrentSession().createQuery("from User where group = :group").setParameter("group", group).list();
+		List<User> users = (List<User>) sessionFactory.getCurrentSession().createQuery("from User where businessGroup = :group").setParameter("group", group).list();
 		return users;
 	}
 
 	@Override
 	public List<String> getAllGroups() {
 		@SuppressWarnings("unchecked")
-		List<String> groupsList = (List<String>) sessionFactory.getCurrentSession().createQuery("select distinct u.group from User u").list();
+		List<String> groupsList = (List<String>) sessionFactory.getCurrentSession().createQuery("select distinct u.businessGroup from User u").list();
 		return groupsList;
 	}
 

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +28,7 @@ import com.cisco.innovation.request.UserDataRequest;
 import com.cisco.innovation.response.AllGroupsDataResponse;
 import com.cisco.innovation.response.GroupPowerDataResponse;
 import com.cisco.innovation.response.LivePowerDataResponse;
+import com.cisco.innovation.response.PledgeResponse;
 import com.cisco.innovation.response.PowerDataResponse;
 import com.cisco.innovation.service.TimeSeriesPowerService;
 import com.cisco.innovation.service.UserService;
@@ -162,6 +162,7 @@ public class PowerUsage {
 			logger.debug(powerDataList.size() + " values obtained for user " + username);
 			response = computeAverages(powerDataList, currentDateTime, previousDateTime, request);
 			response.setResponseCode(HttpStatus.OK.value());
+			response.setUsername(username);
 			return response;
 		} else {
 			return generateUserFailureResponse(username);
@@ -218,6 +219,7 @@ public class PowerUsage {
 			return response;
 		}
 		response.setResponseCode(HttpStatus.OK.value());
+		response.setUsername(username);
 		Double watts = list.get(0).getWatts();
 		response.setWatts(watts);
 		logger.info("Live data for user " + username + " is" + watts + " watts obtained at: " + list.get(0).getDateTime());
@@ -282,16 +284,21 @@ public class PowerUsage {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/pledge/{username}")
-	public ResponseEntity<Void> updatePledge(@PathVariable String username) {
+	public @ResponseBody PledgeResponse updatePledge(@PathVariable String username) {
 		List<User> userList = userService.findUserByUsername(username);
+		PledgeResponse response = new PledgeResponse();
 		if (!userList.isEmpty() || userList.size() != 1) {
 			logger.info("User " + username + " found");
 			User user = userList.get(0);
 			user.setPledges(user.getPledges() + 1);
 			userService.update(user);
-			return new ResponseEntity<Void>(HttpStatus.OK);
+			response.setUsername(username);
+			response.setPledges(user.getPledges());
+			response.setResponseCode(HttpStatus.OK.value());
+			return response;
 		} else {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+			response.setResponseCode(HttpStatus.BAD_REQUEST.value());
+			return response;
 		}
 	}
 }
