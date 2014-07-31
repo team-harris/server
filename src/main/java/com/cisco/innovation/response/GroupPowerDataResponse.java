@@ -39,16 +39,16 @@ public class GroupPowerDataResponse implements Serializable,
 		this.listOfUserResponses = listOfUserResponses;
 	}
 
-	private String group;
+	private String businessGroup;
 
 	private double groupWatts;
 
 	public String getGroup() {
-		return group;
+		return businessGroup;
 	}
 
 	public void setGroup(String group) {
-		this.group = group;
+		this.businessGroup = group;
 	}
 
 	public double getGroupWatts() {

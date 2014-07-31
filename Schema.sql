@@ -10,7 +10,7 @@ CREATE TABLE `power` (
 CREATE TABLE `users` (
   `username` varchar(10) NOT NULL,
   `name` varchar(45) NOT NULL,
-  `group` varchar(45) NOT NULL,
+  `businessGroup` varchar(45) NOT NULL,
   `device_uuid` varchar(45) NOT NULL,
   `pledges` int(11) DEFAULT '0',
   PRIMARY KEY (`username`),

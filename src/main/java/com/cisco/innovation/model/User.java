@@ -32,7 +32,7 @@ public class User implements Serializable {
 
 	private String name;
 
-	private String group;
+	private String businessGroup;
 	
 	private Integer pledges;
 
@@ -56,11 +56,11 @@ public class User implements Serializable {
 	}
 
 	public String getGroup() {
-		return group;
+		return businessGroup;
 	}
 
 	public void setGroup(String group) {
-		this.group = group;
+		this.businessGroup = group;
 	}
 
 	public Device getDevice() {

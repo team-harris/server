@@ -21,7 +21,7 @@ public class UserDataRequest implements Serializable{
 	private String username;
 	
 	@JsonProperty("group")
-	private String group;
+	private String businessGroup;
 	
 	@JsonProperty("hours")
 	private Integer hours;
@@ -65,11 +65,11 @@ public class UserDataRequest implements Serializable{
 	}
 
 	public String getGroup() {
-		return group;
+		return businessGroup;
 	}
 
 	public void setGroup(String group) {
-		this.group = group;
+		this.businessGroup = group;
 	}
 
 }
