@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -275,9 +276,24 @@ public class PowerUsage {
 			}
 		}
 		PowerDataResponse response = new PowerDataResponse();
+		response.setUsername(request.getUsername());
 		response.setDaysMap(daysAvgMap);
 		response.setHoursMap(hourAvgMap);
 		response.setMonthsMap(monthsAvgMap);
 		return response;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/pledge/{username}")
+	public ResponseEntity<Void> updatePledge(@PathVariable String username) {
+		List<User> userList = userService.findUserByUsername(username);
+		if (!userList.isEmpty() || userList.size() != 1) {
+			logger.info("User " + username + " found");
+			User user = userList.get(0);
+			user.setPledges(user.getPledges() + 1);
+			userService.update(user);
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		}
 	}
 }

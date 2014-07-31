@@ -33,6 +33,8 @@ public class User implements Serializable {
 	private String name;
 
 	private String group;
+	
+	private Integer pledges;
 
 	@ManyToOne
 	private Device device;
@@ -67,6 +69,14 @@ public class User implements Serializable {
 
 	public void setDevice(Device device) {
 		this.device = device;
+	}
+
+	public Integer getPledges() {
+		return pledges;
+	}
+
+	public void setPledges(Integer pledges) {
+		this.pledges = pledges;
 	}
 
 }

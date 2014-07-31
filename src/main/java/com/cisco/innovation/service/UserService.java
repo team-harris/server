@@ -18,7 +18,7 @@ public interface UserService {
 
 	void delete(User user);
 
-	User findUserByUsername(String username);
+	List<User> findUserByUsername(String username);
 	
 	List<User> findUsersByDeviceUUID(String uuid);
 	

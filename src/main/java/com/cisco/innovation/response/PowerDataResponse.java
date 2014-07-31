@@ -17,9 +17,18 @@ public class PowerDataResponse implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer responseCode;
+	private String username;
 	private Map<Integer, Double> hoursMap;
 	private Map<Integer, Double> daysMap;
 	private Map<Integer, Double> monthsMap;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
 	public Map<Integer, Double> getHoursMap() {
 		return hoursMap;

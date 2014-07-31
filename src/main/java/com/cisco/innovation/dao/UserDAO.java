@@ -18,7 +18,7 @@ public interface UserDAO {
 
 	void delete(User user);
 
-	User findUserByUsername(String username);
+	List<User> findUserByUsername(String username);
 
 	List<User> findUsersByDeviceUUID(String uuid);
 	

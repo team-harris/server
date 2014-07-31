@@ -4,6 +4,7 @@
 package com.cisco.innovation.api;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.JsonParseException;
@@ -77,12 +78,15 @@ public class DeviceRegistration {
 	public ResponseEntity<Void> getPowerData(@RequestParam("data") String data) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		PowerDataWrapper powerData = objectMapper.readValue(data, PowerDataWrapper.class);
+		List<Double> readings = new ArrayList<Double>();
+		readings.add(powerData.getReading1());
+		readings.add(powerData.getReading2());
+		readings.add(powerData.getReading3());
+		readings.add(powerData.getReading4());
 		if (validateDeviceUUid(powerData.getUUID())) {
 			List<User> users = userService.findUsersByDeviceUUID(powerData.getUUID());
-			for (User user : users) {
-				// Calculate running average
-				// Persist again
-				TimeSeriesPowerPK timeSeriesPowerPK = new TimeSeriesPowerPK(user.getUsername(), powerData.getReading1(), Utils.getCurrentDateTime());
+			for (int i = 0; i < users.size(); i++) {
+				TimeSeriesPowerPK timeSeriesPowerPK = new TimeSeriesPowerPK(users.get(i).getUsername(), readings.get(i), Utils.getCurrentDateTime());
 				TimeSeriesPowerData timeSeriesData = new TimeSeriesPowerData();
 				timeSeriesData.setTimeSeriesPowerPK(timeSeriesPowerPK);
 				timeSeriesPowerService.save(timeSeriesData);
