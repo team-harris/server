@@ -91,6 +91,7 @@ public class PowerUsage {
 		if (users.isEmpty()) {
 			return generateGroupFailureResponse(group);
 		} else {
+			GroupPowerDataResponse response = new GroupPowerDataResponse();
 			for (User user : users) {
 				Double userTotal = 0.0;
 				@SuppressWarnings("unchecked")
@@ -112,12 +113,9 @@ public class PowerUsage {
 					}
 					groupTotal += userTotal;
 				}
+				response.getListOfUserResponses().add(res);
 			}
-			GroupPowerDataResponse response = new GroupPowerDataResponse();
 			response.setResponseCode(HttpStatus.OK.value());
-			response.setDaysMap(daysMap);
-			response.setHoursMap(hoursMap);
-			response.setMonthsMap(monthsMap);
 			response.setGroupWatts(groupTotal);
 			response.setGroup(group);
 			return response;
