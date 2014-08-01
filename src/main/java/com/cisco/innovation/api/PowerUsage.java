@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import com.cisco.innovation.model.TimeSeriesPowerPK;
 import com.cisco.innovation.model.User;
@@ -121,6 +122,7 @@ public class PowerUsage {
 				}
 				response.getListOfUserResponses().add(res);
 			}
+			Collections.sort(response.getListOfUserResponses());
 			response.setResponseCode(HttpStatus.OK.value());
 			response.setGroupWatts(groupTotal);
 			response.setGroup(group);
@@ -143,7 +145,7 @@ public class PowerUsage {
 				groupResponse = calculateForGroup(group, hoursMap, daysMap, monthsMap, request);
 				response.getListOfGroups().add(groupResponse);
 			}
-			Collections.sort(response.getListOfGroups(), Collections.reverseOrder());
+			Collections.sort(response.getListOfGroups());
 			response.setResponseCode(HttpStatus.OK.value());
 			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
 			return response;
@@ -313,15 +315,29 @@ public class PowerUsage {
 		return userTotal;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/pledge/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody PledgeResponse updatePledge(@PathVariable String username, HttpServletResponse servletResponse) {
+	@RequestMapping(method = RequestMethod.GET, value = "/pledge/{username}")
+	public ResponseEntity<Void> updatePledge(@PathVariable String username, HttpServletResponse servletResponse) {
 		List<User> userList = userService.findUserByUsername(username);
-		PledgeResponse response = new PledgeResponse();
 		if (!userList.isEmpty() || userList.size() != 1) {
 			logger.info("User " + username + " found");
 			User user = userList.get(0);
 			user.setPledges(user.getPledges() + 1);
 			userService.update(user);
+			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} else {
+			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/getpledge/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody PledgeResponse getPledge(@PathVariable String username, HttpServletResponse servletResponse) {
+		List<User> userList = userService.findUserByUsername(username);
+		PledgeResponse response = new PledgeResponse();
+		if (!userList.isEmpty() || userList.size() != 1) {
+			logger.info("User " + username + " found");
+			User user = userList.get(0);
 			response.setUsername(username);
 			response.setPledges(user.getPledges());
 			response.setResponseCode(HttpStatus.OK.value());

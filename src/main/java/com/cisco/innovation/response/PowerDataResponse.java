@@ -10,7 +10,7 @@ import java.util.Map;
  * @author rajagast
  *
  */
-public class PowerDataResponse implements Serializable{
+public class PowerDataResponse implements Serializable, Comparable<PowerDataResponse>{
 	
 	/**
 	 * 
@@ -69,6 +69,15 @@ public class PowerDataResponse implements Serializable{
 
 	public void setTotal(double total) {
 		this.total = total;
+	}
+
+	@Override
+	public int compareTo(PowerDataResponse that) {
+		if (this.total < that.total)
+			return -1;
+		if (this.total > that.total)
+			return +1;
+		return 0;
 	}
 
 }
