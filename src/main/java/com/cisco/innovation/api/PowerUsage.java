@@ -3,6 +3,7 @@
  */
 package com.cisco.innovation.api;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -12,20 +13,21 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import com.cisco.innovation.model.TimeSeriesPowerPK;
 import com.cisco.innovation.model.User;
@@ -56,8 +58,10 @@ public class PowerUsage {
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(method = RequestMethod.POST, value = "/getuserdata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody PowerDataResponse  getPowerDataForUser(@RequestBody UserDataRequest request, HttpServletResponse servletResponse) {
+	@RequestMapping(method = RequestMethod.GET, value = "/getuserdata", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody PowerDataResponse  getPowerDataForUser(@RequestParam("data") String data, HttpServletResponse servletResponse) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		UserDataRequest request = objectMapper.readValue(data, UserDataRequest.class);
 		PowerDataResponse response;
 		String username = request.getUsername();
 		logger.debug("Request obtained for user" + username	+ " for " + request.getHours() + " hours");
@@ -70,12 +74,18 @@ public class PowerUsage {
 						previousDateTime);
 		response = queryUsageAndGenerateResponse(username, currentDateTime, previousDateTime, powerDataList, request);
 		servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+		servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		servletResponse.setHeader("Access-Control-Max-Age", "3600");
+		servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
+		
 		return response;
 
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/getgroupdata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody GroupPowerDataResponse getPowerDataForGroup(@RequestBody UserDataRequest request, HttpServletResponse servletResponse) {
+	@RequestMapping(method = RequestMethod.GET, value = "/getgroupdata", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody GroupPowerDataResponse getPowerDataForGroup(@RequestParam("data") String data, HttpServletResponse servletResponse) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		UserDataRequest request = objectMapper.readValue(data, UserDataRequest.class);
 		GroupPowerDataResponse response;
 		Map<Integer, Double> hoursMap = null;
 		Map<Integer, Double> daysMap = null;
@@ -83,6 +93,9 @@ public class PowerUsage {
 		String group = request.getGroup();
 		response = calculateForGroup(group, hoursMap, daysMap, monthsMap, request);
 		servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+		servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		servletResponse.setHeader("Access-Control-Max-Age", "3600");
+		servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
 		return response;
 		
 	}
@@ -131,8 +144,10 @@ public class PowerUsage {
 	}
 	
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/getallgroups", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AllGroupsDataResponse getAllGroupsData(@RequestBody UserDataRequest request, HttpServletResponse servletResponse) {
+	@RequestMapping(method = RequestMethod.GET, value = "/getallgroups", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AllGroupsDataResponse getAllGroupsData(@RequestParam("data") String data, HttpServletResponse servletResponse) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		UserDataRequest request = objectMapper.readValue(data, UserDataRequest.class);
 		AllGroupsDataResponse response;
 		GroupPowerDataResponse groupResponse;
 		Map<Integer, Double> hoursMap = null;
@@ -148,11 +163,17 @@ public class PowerUsage {
 			Collections.sort(response.getListOfGroups());
 			response.setResponseCode(HttpStatus.OK.value());
 			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+			servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+			servletResponse.setHeader("Access-Control-Max-Age", "3600");
+			servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
 			return response;
 		} else {
 			response = new AllGroupsDataResponse();
 			response.setResponseCode(HttpStatus.BAD_REQUEST.value());
 			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+			servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+			servletResponse.setHeader("Access-Control-Max-Age", "3600");
+			servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
 			return response;
 		}
 	}
@@ -234,6 +255,9 @@ public class PowerUsage {
 		response.setWatts(watts);
 		logger.info("Live data for user " + username + " is" + watts + " watts obtained at: " + list.get(0).getDateTime());
 		servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+		servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		servletResponse.setHeader("Access-Control-Max-Age", "3600");
+		servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
 		return response;
 	}
 
@@ -324,9 +348,15 @@ public class PowerUsage {
 			user.setPledges(user.getPledges() + 1);
 			userService.update(user);
 			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+			servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+			servletResponse.setHeader("Access-Control-Max-Age", "3600");
+			servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} else {
 			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+			servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+			servletResponse.setHeader("Access-Control-Max-Age", "3600");
+			servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -342,10 +372,16 @@ public class PowerUsage {
 			response.setPledges(user.getPledges());
 			response.setResponseCode(HttpStatus.OK.value());
 			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+			servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+			servletResponse.setHeader("Access-Control-Max-Age", "3600");
+			servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
 			return response;
 		} else {
 			response.setResponseCode(HttpStatus.BAD_REQUEST.value());
 			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+			servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+			servletResponse.setHeader("Access-Control-Max-Age", "3600");
+			servletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
 			return response;
 		}
 	}
