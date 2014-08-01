@@ -21,6 +21,7 @@ public class PowerDataResponse implements Serializable{
 	private Map<Integer, Double> hoursMap;
 	private Map<Integer, Double> daysMap;
 	private Map<Integer, Double> monthsMap;
+	private double total;
 
 	public String getUsername() {
 		return username;
@@ -60,6 +61,14 @@ public class PowerDataResponse implements Serializable{
 
 	public void setMonthsMap(Map<Integer, Double> monthsMap) {
 		this.monthsMap = monthsMap;
+	}
+
+	public double getTotal() {
+		return total;
+	}
+
+	public void setTotal(double total) {
+		this.total = total;
 	}
 
 }

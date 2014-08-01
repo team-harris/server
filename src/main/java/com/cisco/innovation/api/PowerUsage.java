@@ -289,9 +289,30 @@ public class PowerUsage {
 		response.setDaysMap(daysAvgMap);
 		response.setHoursMap(hourAvgMap);
 		response.setMonthsMap(monthsAvgMap);
+		response.setTotal(calculateUserTotal(hourAvgMap, daysAvgMap, monthsAvgMap));
 		return response;
 	}
 	
+	private double calculateUserTotal(HashMap<Integer, Double> hourAvgMap,
+			HashMap<Integer, Double> daysAvgMap,
+			HashMap<Integer, Double> monthsAvgMap) {
+		Double userTotal = 0.0;
+		if ((!hourAvgMap.isEmpty()) && daysAvgMap.isEmpty() && monthsAvgMap.isEmpty()) {
+			for (Double value : hourAvgMap.values()) {
+				userTotal += value;
+			}
+		} else if ((!daysAvgMap.isEmpty()) && hourAvgMap.isEmpty() && monthsAvgMap.isEmpty()) {
+			for (Double value : daysAvgMap.values()) {
+				userTotal += value;
+			}
+		} else if ((!monthsAvgMap.isEmpty()) && daysAvgMap.isEmpty() && hourAvgMap.isEmpty()) {
+			for (Double value : monthsAvgMap.values()) {
+				userTotal += value;
+			}
+		}
+		return userTotal;
+	}
+
 	@RequestMapping(method = RequestMethod.GET, value = "/pledge/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody PledgeResponse updatePledge(@PathVariable String username, HttpServletResponse servletResponse) {
 		List<User> userList = userService.findUserByUsername(username);
