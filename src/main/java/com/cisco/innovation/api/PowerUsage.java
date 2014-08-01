@@ -10,11 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,7 +56,7 @@ public class PowerUsage {
 	private UserService userService;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/getuserdata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody PowerDataResponse getPowerDataForUser(@RequestBody UserDataRequest request) {
+	public @ResponseBody PowerDataResponse  getPowerDataForUser(@RequestBody UserDataRequest request, HttpServletResponse servletResponse) {
 		PowerDataResponse response;
 		String username = request.getUsername();
 		logger.debug("Request obtained for user" + username	+ " for " + request.getHours() + " hours");
@@ -64,18 +68,20 @@ public class PowerUsage {
 				.getPowerUsageForUser(username, currentDateTime,
 						previousDateTime);
 		response = queryUsageAndGenerateResponse(username, currentDateTime, previousDateTime, powerDataList, request);
+		servletResponse.setHeader("Access-Control-Allow-Origin", "*");
 		return response;
 
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/getgroupdata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody GroupPowerDataResponse getPowerDataForGroup(@RequestBody UserDataRequest request) {
+	public @ResponseBody GroupPowerDataResponse getPowerDataForGroup(@RequestBody UserDataRequest request, HttpServletResponse servletResponse) {
 		GroupPowerDataResponse response;
 		Map<Integer, Double> hoursMap = null;
 		Map<Integer, Double> daysMap = null;
 		Map<Integer, Double> monthsMap = null;
 		String group = request.getGroup();
 		response = calculateForGroup(group, hoursMap, daysMap, monthsMap, request);
+		servletResponse.setHeader("Access-Control-Allow-Origin", "*");
 		return response;
 		
 	}
@@ -124,7 +130,7 @@ public class PowerUsage {
 	
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/getallgroups", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AllGroupsDataResponse getAllGroupsData(@RequestBody UserDataRequest request) {
+	public @ResponseBody AllGroupsDataResponse getAllGroupsData(@RequestBody UserDataRequest request, HttpServletResponse servletResponse) {
 		AllGroupsDataResponse response;
 		GroupPowerDataResponse groupResponse;
 		Map<Integer, Double> hoursMap = null;
@@ -139,10 +145,12 @@ public class PowerUsage {
 			}
 			Collections.sort(response.getListOfGroups(), Collections.reverseOrder());
 			response.setResponseCode(HttpStatus.OK.value());
+			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
 			return response;
 		} else {
 			response = new AllGroupsDataResponse();
 			response.setResponseCode(HttpStatus.BAD_REQUEST.value());
+			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
 			return response;
 		}
 	}
@@ -206,7 +214,7 @@ public class PowerUsage {
 	
 	// Consider GET
 	@RequestMapping(method = RequestMethod.GET, value = "/getlivedata/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody LivePowerDataResponse getLivePowerData(@PathVariable String username) {
+	public @ResponseBody LivePowerDataResponse getLivePowerData(@PathVariable String username, HttpServletResponse servletResponse) {
 		// Code for producing live data for a user goes here
 		// Get latest record from DB for a user
 		// Construct response object and send response code
@@ -223,6 +231,7 @@ public class PowerUsage {
 		Double watts = list.get(0).getWatts();
 		response.setWatts(watts);
 		logger.info("Live data for user " + username + " is" + watts + " watts obtained at: " + list.get(0).getDateTime());
+		servletResponse.setHeader("Access-Control-Allow-Origin", "*");
 		return response;
 	}
 
@@ -283,8 +292,8 @@ public class PowerUsage {
 		return response;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/pledge/{username}")
-	public @ResponseBody PledgeResponse updatePledge(@PathVariable String username) {
+	@RequestMapping(method = RequestMethod.GET, value = "/pledge/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody PledgeResponse updatePledge(@PathVariable String username, HttpServletResponse servletResponse) {
 		List<User> userList = userService.findUserByUsername(username);
 		PledgeResponse response = new PledgeResponse();
 		if (!userList.isEmpty() || userList.size() != 1) {
@@ -295,9 +304,11 @@ public class PowerUsage {
 			response.setUsername(username);
 			response.setPledges(user.getPledges());
 			response.setResponseCode(HttpStatus.OK.value());
+			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
 			return response;
 		} else {
 			response.setResponseCode(HttpStatus.BAD_REQUEST.value());
+			servletResponse.setHeader("Access-Control-Allow-Origin", "*");
 			return response;
 		}
 	}
